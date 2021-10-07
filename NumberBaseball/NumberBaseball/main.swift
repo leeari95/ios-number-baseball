@@ -37,13 +37,14 @@ func checkBallCount(answerNumbers: [Int], userNumbers: [Int]) -> [Int] {
 func checkWrongInput(userInput: String) {
     let slicedNumbers = userInput.components(separatedBy: " ").compactMap{Int(String($0))}
     let removedSameNumbers = Set(slicedNumbers)
+    let wrongInput = "입력이 잘못되었습니다"
     
     if userInput.count != 5 {
-        print("입력이 잘못되었습니다")
+        print(wrongInput)
     } else if slicedNumbers.count != 3 {
-        print("입력이 잘못되었습니다")
+        print(wrongInput)
     } else if removedSameNumbers.count != 3 {
-        print("입력이 잘못되었습니다")
+        print(wrongInput)
     } else {
         runGame(userNumbers: slicedNumbers)
     }
