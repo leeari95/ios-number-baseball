@@ -64,4 +64,17 @@ func startGame() {
     }
 }
 
-startGame()
+func showMenu() {
+    print("1. 게임시작\n2. 게임종료\n원하는 기능을 선택해주세요 : ", terminator: "")
+    guard let input = readLine() else { return }
+    if input == "1" {
+        startGame()
+    } else if input == "2" {
+        return
+    } else {
+        print("입력이 잘못되었습니다")
+        showMenu()
+    }
+}
+
+showMenu()
