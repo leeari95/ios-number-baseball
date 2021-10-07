@@ -1,11 +1,8 @@
-//
-//  NumberBaseball - main.swift
-//  Created by yagom. 
-//  Copyright © yagom academy. All rights reserved.
-// 
-
 import Foundation
 
+
+var randomAnswerNumbers = createRandomNumbers()
+var gameCount = 9
 
 func createRandomNumbers() -> [Int] {
     let shuffledNumbers = [Int](1...9).shuffled()
@@ -37,36 +34,66 @@ func checkBallCount(answerNumbers: [Int], userNumbers: [Int]) -> [Int] {
     return [strikeCount, ballCount]
 }
 
-var randomAnswerNumbers = createRandomNumbers()
-var gameCount = 9
+func checkWrongInput(userInput: String) {
+    let slicedNumbers = userInput.components(separatedBy: " ").compactMap{Int(String($0))}
+    let removedSameNumbers = Set(slicedNumbers)
+    
+    if userInput.count != 5 {
+        print("입력이 잘못되었습니다")
+    } else if slicedNumbers.count != 3 {
+        print("입력이 잘못되었습니다")
+    } else if removedSameNumbers.count != 3 {
+        print("입력이 잘못되었습니다")
+    } else {
+        runGame(userNumbers: slicedNumbers)
+    }
+}
 
-func printVictoryMessage(gameChance gameCount: Int, strikeScore strikeCount: Int) {
+func runGame(userNumbers: [Int]) {
+    let gameScore = checkBallCount(answerNumbers: randomAnswerNumbers, userNumbers: userNumbers)
+    let strikeCount = gameScore[0]
+    let ballCount = gameScore[1]
+
+    gameCount -= 1
+    print("\(strikeCount) 스트라이크, \(ballCount) 볼")
+    if strikeCount < 3 {
+        print("남은 기회 : \(gameCount)")
+    }
+    printVictoryMessage(strikeScore: strikeCount)
+}
+
+func printVictoryMessage(strikeScore strikeCount: Int) {
     if gameCount == 0 && strikeCount < 3 {
         print("컴퓨터 승리…!")
     } else if strikeCount == 3 {
         print("사용자 승리!")
+        gameCount = 0
     }
+}
+
+func printInputGuide() {
+    print("""
+        숫자 3개를 띄어쓰기로 구분하여 입력해주세요.
+        중복 숫자는 허용하지 않습니다.
+        입력 :
+        """, terminator: " ")
 }
 
 func startGame() {
     while gameCount > 0 {
-        gameCount -= 1
-        let userNumbers = createRandomNumbers()
-        let gameScore = checkBallCount(answerNumbers: randomAnswerNumbers, userNumbers: userNumbers)
-        let strikeCount = gameScore[0]
-        let ballCount = gameScore[1]
-        
-        print("임의의 수 : \(userNumbers[0]) \(userNumbers[1]) \(userNumbers[2])")
-        print("\(strikeCount) 스트라이크, \(ballCount) 볼")
-        print("남은 기회 : \(gameCount)")
-        
-        printVictoryMessage(gameChance: gameCount, strikeScore: strikeCount)
+        printInputGuide()
+
+        guard let userInput = readLine() else { return }
+        checkWrongInput(userInput: userInput)
     }
+    gameCount = 9
+    showMenu()
 }
 
 func showMenu() {
     print("1. 게임시작\n2. 게임종료\n원하는 기능을 선택해주세요 : ", terminator: "")
     guard let input = readLine() else { return }
+    
     if input == "1" {
         startGame()
     } else if input == "2" {
